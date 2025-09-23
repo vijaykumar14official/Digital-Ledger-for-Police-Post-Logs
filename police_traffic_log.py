@@ -1,17 +1,15 @@
-# ==============================================================
 #  🔐 Securecheck: Police Check Post Digital Ledger
 # A Streamlit-based dashboard connected to MySQL database
 # For analyzing traffic stops, violations, arrests, and predictions
-# ==============================================================
 
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
 import plotly.express as px
 
-# -----------------------------
+
 # 📌 Database Connection
-# -----------------------------
+
 def create_connection():
     """
     Create and return a SQLAlchemy connection to the MySQL database.
@@ -28,9 +26,9 @@ def create_connection():
         st.error(f"Database Connection Error: {e}")
         return None
 
-# -----------------------------
+
 # 📌 Fetch Data from Database
-# -----------------------------
+
 def fetch_data(query):
     """
     Execute query and return results as a pandas DataFrame.
@@ -49,36 +47,34 @@ def fetch_data(query):
         # Return empty DataFrame if connection failed
         return pd.DataFrame()
 
-# -----------------------------
+
 # 📌 Streamlit Page Setup
-# -----------------------------
+
 st.set_page_config(page_title="Securecheck Police Dashboard", layout="wide")
 st.title(" 🛡️ Securecheck: Police Check Post Digital Ledger")
 st.markdown("Real-time monitoring and insights for law enforcement 🚔")
 
-# -----------------------------
+
 # 🗂️ Police Logs Overview (Load & display full table)
-# -----------------------------
+
 st.header("🗂️ Police Logs Overview")
 query = "SELECT * FROM traffic_stop_log"
 data = fetch_data(query)  # Load data from DB
 
-# Safe conversion / extraction of stop_time from timestamp column if present
 if not data.empty and 'timestamp' in data.columns:
     # Ensure timestamp is datetime, coerce errors to NaT
     data['timestamp'] = pd.to_datetime(data['timestamp'], errors='coerce')
     data['stop_time'] = data['timestamp'].dt.time
 else:
-    # If timestamp absent, ensure stop_time exists as column to avoid downstream errors
-    if 'stop_time' not in data.columns:
+        if 'stop_time' not in data.columns:
         data['stop_time'] = pd.NA
 
 # Show the raw table for inspection
 st.dataframe(data, use_container_width=True)
 
-# -----------------------------
+
 # 📊 Dashboard Metrics (KPIs)
-# -----------------------------
+
 st.header("📊 Dashboard Metrics")
 
 col1, col2, col3, col4 = st.columns(4)
@@ -89,7 +85,7 @@ with col1:
     st.metric("Total Police Stops", total_stops)
 
 with col2:
-    # Count rows where stop_outcome contains "arrest" (case-insensitive)
+    # Count rows where stop_outcome contains "arrest" 
     if 'stop_outcome' in data.columns:
         arrests = data['stop_outcome'].str.contains("arrest", case=False, na=False).sum()
     else:
@@ -105,16 +101,15 @@ with col3:
     st.metric("Total Warnings", warnings)
 
 with col4:
-    # Count drug-related stops (assumes 1 indicates drug-related)
+    # Count drug-related stops 
     if 'drugs_related_stop' in data.columns:
         drug_related_stop = (data['drugs_related_stop'] == 1).sum()
     else:
         drug_related_stop = 0
     st.metric("Total Drug related stop", drug_related_stop)
 
-# -----------------------------
 # 🚗 Vehicle Based Report
-# -----------------------------
+
 st.header("🗂️ Vehicle based report")
 vehicle_based_report = st.selectbox(
     "Choose Visualization:",
@@ -158,9 +153,8 @@ elif vehicle_based_report == "Which vehicles were most frequently searched?":
     else:
         st.warning("Data missing for vehicle_number or search_conducted.")
 
-# -----------------------------
 # 📊 Visual Insights
-# -----------------------------
+
 st.header("🗂️ Visual Insights")
 
 visualization_option = st.selectbox(
@@ -182,7 +176,7 @@ if visualization_option == "👨‍🦳 Highest Arrest Rate by Driver Age Group"
             .mean()
             .reset_index(name='Arrest Rate')
         )
-        # Safely select highest arrest rate row
+        
         if not arrest_rate_by_age.empty:
             highest = arrest_rate_by_age.sort_values('Arrest Rate', ascending=False).iloc[0]
             st.write(
@@ -234,9 +228,9 @@ elif visualization_option == "Which race and gender combination has the highest 
     else:
         st.warning("Required data for race, driver gender, or search conducted is missing.")
 
-# -----------------------------
+
 # 🕒 Time & Duration Based Visualizations
-# -----------------------------
+
 st.header("🕒 Time & Duration Based Visualizations:")
 
 time_duration_option = st.selectbox(
@@ -305,7 +299,7 @@ elif time_duration_option == "What is the average stop duration for different vi
             labels={'violation': 'Violation Type', 'stop_duration_num': 'Average Stop Duration (minutes)'},
             title='Average Stop Duration by Violation'
         )
-        # Improve readability
+        
         fig.update_xaxes(tickangle=45, categoryorder='total descending')
         fig.update_layout(xaxis_title="Violation Type", yaxis_title="Average Stop Duration (minutes)", showlegend=False)
         st.plotly_chart(fig, use_container_width=True)
@@ -338,7 +332,7 @@ elif time_duration_option == "Are stops during the night more likely to lead to 
             st.info("**No, Day stops are more likely to lead to arrests**")
 
         # Plot comparison
-        # Convert arrest_rate Series to DataFrame for plotting if necessary
+       
         ar_df = arrest_rate.reset_index()
         ar_df.columns = ['Time Period', 'Arrest Rate']
         fig = px.bar(ar_df, x='Time Period', y='Arrest Rate', title="Arrest Rate: Night vs Day")
@@ -346,9 +340,9 @@ elif time_duration_option == "Are stops during the night more likely to lead to 
     else:
         st.warning("Missing required data: timestamp and stop_outcome columns.")
 
-# -----------------------------
+
 # ⚖️ Violation-Based Analysis
-# -----------------------------
+
 st.header("⚖️ Violation-Based:")
 
 violation_option = st.selectbox(
@@ -444,9 +438,9 @@ elif violation_option == "Is there a violation that rarely results in search or 
     else:
         st.warning("Data is missing required columns.")
 
-# -----------------------------
+
 # 🌍 Location-Based Analysis
-# -----------------------------
+
 st.header("🌍 Location-Based")
 
 location_based = st.selectbox(
@@ -531,9 +525,9 @@ elif location_based == "Which country has the most stops with search conducted?"
     else:
         st.warning("Missing country_name or search_conducted column.")
 
-# -----------------------------
+
 # 📈 Traffic Stop and Driver Violation Analysis Overview (Advanced reports)
-# -----------------------------
+
 st.header("Traffic Stop and Driver Violation Analysis Overview")
 
 stop_violation = st.selectbox(
@@ -784,9 +778,9 @@ elif stop_violation == "Top 5 Violations with Highest Arrest Rates":
     else:
         st.warning("Missing violation column.")
 
-# -----------------------------
+
 # 📝 Add New Police Log & Predict Outcome
-# -----------------------------
+
 st.header("📝 Add New Police Log & Predict Outcome and Violation")
 
 with st.form("new_log_form"):
@@ -824,7 +818,7 @@ if submitted:
         drugs_int = 0
 
     # Filter historical data to find records similar to the new input
-    # Note: filter uses exact matches - you can improve fuzzy matching or modelling later
+    
     filtered_data = data[
         (data.get('driver_gender') == driver_gender) &
         (data.get('driver_age') == driver_age) &
@@ -865,5 +859,6 @@ if submitted:
 Stop duration: **{stop_duration}**
 Vehicle Number: **{vehicle_number}**
 """)
+
 
 
