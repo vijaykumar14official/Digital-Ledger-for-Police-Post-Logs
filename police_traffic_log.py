@@ -65,7 +65,7 @@ if not data.empty and 'timestamp' in data.columns:
     data['stop_time'] = data['timestamp'].dt.time
 else:
         if 'stop_time' not in data.columns:
-        data['stop_time'] = pd.NA
+            data['stop_time'] = pd.NA
 
 # Show the raw table for inspection
 st.dataframe(data, use_container_width=True)
@@ -857,6 +857,7 @@ if submitted:
 Stop duration: **{stop_duration}**
 Vehicle Number: **{vehicle_number}**
 """)
+
 
 
 
