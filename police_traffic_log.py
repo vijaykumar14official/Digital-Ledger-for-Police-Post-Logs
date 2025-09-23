@@ -16,8 +16,6 @@ def create_connection():
     Update the connection string to match your DB credentials if required.
     """
     try:
-        # NOTE: This uses the mysqlclient driver (mysql+mysqldb). If you prefer pymysql use:
-        # create_engine("mysql+pymysql://root:password@localhost:3306/project")
         engine = create_engine("mysql+mysqldb://root:admin@localhost:3306/project")
         connection = engine.connect()
         return connection
@@ -859,6 +857,7 @@ if submitted:
 Stop duration: **{stop_duration}**
 Vehicle Number: **{vehicle_number}**
 """)
+
 
 
 
