@@ -38,8 +38,3 @@ The main goal of this project is to help law enforcement and traffic authorities
 
 ---
 
-## 🚀 Setup Instructions
-
-### 1. Clone Repository
-```bash
-(https://github.com/vijaykumar14official/Digital-Ledger-for-Police-Post-Logs.git)
