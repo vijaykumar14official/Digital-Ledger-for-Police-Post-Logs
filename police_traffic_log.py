@@ -618,16 +618,15 @@ elif stop_violation == "Time Period Analysis of Stops, Number of Stops by Year,M
     if not data.empty and 'stop_date' in data.columns and 'stop_time' in data.columns:
         # Query stops by year
         year_query = """
-        SELECT YEAR(stop_date) AS year, COUNT(DISTINCT stop_date) AS stops
-        FROM project.traffic_stop_log
+       SELECT YEAR(stop_date) AS year, COUNT(*) AS stops 
+        FROM project.traffic_stop_log 
         GROUP BY YEAR(stop_date)
-        ORDER BY year
         """
         df_year = fetch_data(year_query)
 
         # Query stops by month
         month_query = """
-        SELECT MONTH(stop_date) AS month, COUNT(DISTINCT stop_date) AS stops
+        SELECT MONTH(stop_date) AS month, COUNT(*) AS stops
         FROM project.traffic_stop_log
         GROUP BY MONTH(stop_date)
         ORDER BY month
@@ -647,8 +646,6 @@ elif stop_violation == "Time Period Analysis of Stops, Number of Stops by Year,M
         if not df_year.empty:
             st.write('### Stops by Year')
             st.dataframe(df_year)
-            fig_year = px.bar(df_year, x='year', y='stops', title='Number of Stops by Year', labels={'year':'Year','stops':'Number of Stops'})
-            st.plotly_chart(fig_year)
         if not df_month.empty:
             st.write('### Stops by Month')
             st.dataframe(df_month)
@@ -857,7 +854,6 @@ if submitted:
 Stop duration: **{stop_duration}**
 Vehicle Number: **{vehicle_number}**
 """)
-
 
 
 
