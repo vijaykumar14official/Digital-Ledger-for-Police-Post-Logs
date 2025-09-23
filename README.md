@@ -1,4 +1,4 @@
-# 🔐 Securecheck: Police Check Post Digital Ledger
+# 🛡️ Securecheck: Police Check Post Digital Ledger
 
 ## 📌 Overview
 **Securecheck** is a Streamlit-powered interactive dashboard designed to digitize and analyze police check post records.  
